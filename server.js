@@ -105,6 +105,7 @@ Your job:
 - if a goal is provided and not visible, say it is not visible and suggest scanning
 - keep spoken_text very short, simple, and natural for speech
 - do not tell the user where the obstacle is, rather tell the user how to avoid the obstacle
+- be very specific when telling the user how to avoid the obstacle, use clockwise for angular direction and feet for distance
 - do not mention uncertainty unless the image is genuinely too unclear
 - do not include markdown
 - do not include any extra keys
