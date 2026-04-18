@@ -1,145 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#0f172a" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="Argus" />
-    <title>Argus</title>
-    <link rel="manifest" href="/manifest.webmanifest" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="icon" href="/favicon.png" />
-    <link rel="stylesheet" href="/styles.css" />
-  </head>
-  <body>
-    <main class="app-shell">
-      <header class="hero-card">
-        <div>
-          <p class="eyebrow">Prototype</p>
-          <h1>Argus</h1>
-          <p class="subtext">
-            Walk guidance with obstacle naming, floor hazard warnings, angles, and short distance instructions.
-          </p>
-        </div>
-        <div class="status-pill" id="healthPill">Checking server…</div>
-      </header>
+<head>
+  <meta charset="UTF-8">
+  <title>Argus</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-      <section class="card">
-        <div class="section-head">
-          <h2>Camera</h2>
-          <span id="cameraState" class="muted">Off</span>
-        </div>
-        <video id="video" autoplay playsinline muted></video>
-        <canvas id="captureCanvas" hidden></canvas>
-        <div class="controls two-up">
-          <button id="startCameraBtn">Start Camera</button>
-          <button id="testVoiceBtn" class="secondary">Test Voice</button>
-        </div>
-      </section>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #0a0a0a;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
 
-      <section class="card">
-        <div class="section-head">
-          <h2>Scan</h2>
-          <span id="scanState" class="muted">Idle</span>
-        </div>
-        <div class="controls two-up">
-          <button id="analyzeBtn">Analyze Once</button>
-          <button id="autoScanBtn" class="secondary">Start Auto Scan</button>
-        </div>
-        <div class="controls two-up compact-grid">
-          <label>
-            Scan every
-            <select id="intervalSelect">
-              <option value="1000" selected>1 sec</option>
-              <option value="2000">2 sec</option>
-              <option value="3000">3 sec</option>
-              <option value="5000">5 sec</option>
-            </select>
-          </label>
-          <label>
-            JPEG quality
-            <select id="qualitySelect">
-              <option value="0.4">0.4</option>
-              <option value="0.6" selected>0.6</option>
-              <option value="0.8">0.8</option>
-            </select>
-          </label>
-        </div>
-      </section>
+    h1 {
+      margin-top: 10px;
+      font-size: 28px;
+    }
 
-      <section class="card result-card">
-        <div class="section-head">
-          <h2>Latest Guidance</h2>
-          <span id="urgencyBadge" class="urgency low">Low</span>
-        </div>
-        <p id="spokenText" class="spoken-text">Press Analyze Once after starting the camera.</p>
-        <div class="result-grid">
-          <div>
-            <span class="label">Recommended direction</span>
-            <strong id="recommendedValue">—</strong>
-          </div>
-          <div>
-            <span class="label">Action</span>
-            <strong id="actionValue">—</strong>
-          </div>
-          <div>
-            <span class="label">Blocked directions</span>
-            <strong id="blockedValue">—</strong>
-          </div>
-          <div>
-            <span class="label">Alternatives</span>
-            <strong id="alternativesValue">—</strong>
-          </div>
-          <div>
-            <span class="label">Walk angle</span>
-            <strong id="angleValue">—</strong>
-          </div>
-          <div>
-            <span class="label">Move distance</span>
-            <strong id="distanceValue">—</strong>
-          </div>
-          <div>
-            <span class="label">Path</span>
-            <strong id="pathValue">—</strong>
-          </div>
-          <div>
-            <span class="label">Reason</span>
-            <strong id="reasonValue">—</strong>
-          </div>
-        </div>
-      </section>
+    video {
+      width: 90%;
+      max-width: 400px;
+      margin-top: 10px;
+      border-radius: 10px;
+      border: 2px solid #444;
+    }
 
-      <section class="card small">
-        <div class="section-head">
-          <h2>Obstacles</h2>
-        </div>
-        <ul id="obstacleList" style="margin: 0; padding-left: 1.2rem; line-height: 1.6;">
-          <li>No scan yet.</li>
-        </ul>
-      </section>
+    #status {
+      margin: 15px;
+      font-size: 18px;
+      min-height: 40px;
+    }
 
-      <section class="card small">
-        <div class="section-head">
-          <h2>Floor hazards</h2>
-        </div>
-        <ul id="floorHazardList" style="margin: 0; padding-left: 1.2rem; line-height: 1.6;">
-          <li>No scan yet.</li>
-        </ul>
-      </section>
+    button {
+      margin: 8px;
+      padding: 12px 16px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: none;
+      background: #1f1f1f;
+      color: white;
+      cursor: pointer;
+    }
 
-      <section class="card small">
-        <h2>How to use it</h2>
-        <ol>
-          <li>Tap <strong>Start Camera</strong> and allow access.</li>
-          <li>Tap <strong>Analyze Once</strong> to test the full flow.</li>
-          <li>Use <strong>Start Auto Scan</strong> for continuous 1 second scanning.</li>
-          <li>Argus should name obstacles, call out floor hazards, and suggest where to move.</li>
-        </ol>
-      </section>
-    </main>
+    button:hover {
+      background: #333;
+    }
+  </style>
+</head>
 
-    <script src="/app.js" type="module"></script>
-  </body>
+<body>
+
+  <h1>Argus</h1>
+
+  <video id="video" autoplay playsinline></video>
+
+  <p id="status">Ready</p>
+
+  <div>
+    <button onclick="startCamera()">Start Camera</button>
+    <button onclick="startScan()">Auto Scan</button>
+    <button onclick="startListening()">Set Goal</button>
+  </div>
+
+  <script src="app.js"></script>
+
+</body>
 </html>
