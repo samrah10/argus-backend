@@ -1,18 +1,14 @@
 {
-  "name": "guiding-eye-webapp",
-  "version": "0.1.0",
-  "private": true,
+  "name": "argus-backend",
+  "version": "1.0.0",
   "type": "module",
-  "description": "Home-screen-friendly iPhone web app prototype for obstacle-aware voice guidance using OpenAI vision.",
+  "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node --watch server.js"
+    "start": "node server.js"
   },
-  "engines": {
-    "node": ">=18"
-  },
-"dependencies": {
-  "dotenv": "^16.4.5",
-  "express": "^4.21.2",
-  "node-fetch": "^3.3.2"
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "node-fetch": "^3.3.2"
+  }
 }
