@@ -20,7 +20,7 @@ let goalConfirmedFor = "";
 let lastSpokenMessage = "";
 let lastSpokenTime = 0;
 
-const SCAN_INTERVAL_MS = 3500;
+const SCAN_INTERVAL_MS = 10000;
 const DUPLICATE_SPEECH_WINDOW_MS = 8000;
 
 function setStatus(message, kind = "warn") {
