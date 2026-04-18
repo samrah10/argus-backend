@@ -5,9 +5,10 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const app = express();
-app.use(express.json({ limit: "10mb" }));
+const port = process.env.PORT || 3000;
 
-const PORT = process.env.PORT || 3000;
+app.use(express.json({ limit: "10mb" }));
+app.use(express.static("public"));
 
 app.get("/api/health", (req, res) => {
   res.send("OK");
@@ -17,83 +18,72 @@ app.post("/api/analyze", async (req, res) => {
   try {
     const { image, goal } = req.body;
 
-    const prompt = `
-You are Argus, a navigation assistant for a blind user.
+    if (!image) {
+      return res.json({
+        spoken_text: "No image received",
+        recommended_direction: "12 o'clock"
+      });
+    }
 
-User goal: ${goal || "none"}
-
-Analyze the image and:
-- Identify obstacles in path
-- Identify floor hazards (cables, mats, objects)
-- Guide movement safely
-- Use CLOCK directions only (12, 1–2, 3, 10–11)
+    const systemPrompt = `
+You are Argus, a navigation assistant for blind users.
 
 Rules:
-- Never say "turn" without reason
-- If path clear: "Path clear, continue forward"
-- If obstacle: give avoidance direction
+- Detect obstacles and floor hazards
+- Give short spoken instructions
+- Use clock directions (12, 3, 6, 9)
+- If clear: say "Path clear, continue forward"
+- If blocked: suggest safe direction
 - If goal visible: guide toward it
-- If goal not visible: suggest scanning
+- If goal not visible: say not visible
 
-Return JSON:
-
+Return ONLY JSON:
 {
-  "obstacles": [],
-  "floor_hazards": [],
-  "recommended_direction": "12 o'clock",
-  "action": "move",
-  "goal_seen": false,
-  "spoken_text": ""
+ "spoken_text": "",
+ "recommended_direction": "12 o'clock"
 }
-
-Spoken text must be under 8 words.
 `;
 
-    const response = await fetch("https://api.openai.com/v1/responses", {
+    const userText = goal
+      ? `User goal: ${goal}`
+      : "No goal provided";
+
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
       },
       body: JSON.stringify({
-        model: process.env.OPENAI_MODEL,
-        input: [
+        model: process.env.OPENAI_MODEL || "gpt-4.1",
+        messages: [
+          { role: "system", content: systemPrompt },
           {
             role: "user",
             content: [
-              { type: "input_text", text: prompt },
-              {
-                type: "input_image",
-                image_url: image
-              }
+              { type: "text", text: userText },
+              { type: "image_url", image_url: { url: image } }
             ]
           }
-        ]
+        ],
+        response_format: { type: "json_object" }
       })
     });
 
     const data = await response.json();
-
-    let text = data.output?.[0]?.content?.[0]?.text || "{}";
+    const text = data.choices?.[0]?.message?.content;
 
     let parsed;
     try {
       parsed = JSON.parse(text);
     } catch {
       parsed = {
-        spoken_text: "Scanning environment",
+        spoken_text: "Scan unclear, try again",
         recommended_direction: "12 o'clock"
       };
     }
 
-    // Fix dumb turning
-    if (!parsed.obstacles?.length && parsed.recommended_direction !== "12 o'clock") {
-      parsed.spoken_text = "Path clear, continue forward";
-      parsed.recommended_direction = "12 o'clock";
-    }
-
     res.json(parsed);
-
   } catch (err) {
     console.error(err);
     res.json({
@@ -103,6 +93,6 @@ Spoken text must be under 8 words.
   }
 });
 
-app.listen(PORT, () => {
-  console.log("Argus running on port " + PORT);
+app.listen(port, () => {
+  console.log(`Running at http://localhost:${port}`);
 });
