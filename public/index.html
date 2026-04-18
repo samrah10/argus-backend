@@ -1,71 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
   <title>Argus</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: #0a0a0a;
-      color: white;
-      margin: 0;
-      padding: 0;
-    }
-
-    h1 {
-      margin-top: 10px;
-      font-size: 28px;
-    }
-
-    video {
-      width: 90%;
-      max-width: 400px;
-      margin-top: 10px;
-      border-radius: 10px;
-      border: 2px solid #444;
-    }
-
-    #status {
-      margin: 15px;
-      font-size: 18px;
-      min-height: 40px;
-    }
-
-    button {
-      margin: 8px;
-      padding: 12px 16px;
-      font-size: 16px;
-      border-radius: 8px;
-      border: none;
-      background: #1f1f1f;
-      color: white;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #333;
-    }
-  </style>
 </head>
-
 <body>
 
-  <h1>Argus</h1>
+<h1>Argus</h1>
 
-  <video id="video" autoplay playsinline></video>
+<button onclick="startCamera()">Start Camera</button>
+<button onclick="startScan()">Auto Scan</button>
+<button onclick="setGoal()">Set Goal</button>
 
-  <p id="status">Ready</p>
+<br><br>
 
-  <div>
-    <button onclick="startCamera()">Start Camera</button>
-    <button onclick="startScan()">Auto Scan</button>
-    <button onclick="startListening()">Set Goal</button>
-  </div>
+<video id="video" autoplay playsinline width="300"></video>
+<canvas id="canvas" style="display:none;"></canvas>
 
-  <script src="app.js"></script>
+<p id="output"></p>
+
+<script src="app.js"></script>
 
 </body>
 </html>
