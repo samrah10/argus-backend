@@ -128,7 +128,7 @@ Return exactly this JSON shape:
       body: JSON.stringify({
         model,
         temperature: 0.2,
-        max_tokens: 140,
+        max_completion_tokens: 140,
         response_format: { type: "json_object" },
         messages: [
           {
