@@ -1,24 +1,184 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Argus</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b0f14;
+      --panel: #151b22;
+      --border: #263241;
+      --text: #e8edf2;
+      --muted: #9db0c3;
+      --accent: #4ea1ff;
+      --danger: #ff5f5f;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 2rem;
+    }
+
+    .sub {
+      margin: 0 0 18px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    button {
+      border: 1px solid var(--border);
+      background: #1d2630;
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    button:hover {
+      border-color: var(--accent);
+    }
+
+    button.stop {
+      border-color: #5d2a2a;
+      background: #311b1b;
+      color: #ffd6d6;
+    }
+
+    .video-shell {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: #000;
+      aspect-ratio: 4 / 3;
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    @media (min-width: 820px) {
+      .grid {
+        grid-template-columns: 1.3fr 0.9fr;
+      }
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+
+    .value {
+      font-size: 1rem;
+      line-height: 1.45;
+      word-break: break-word;
+    }
+
+    .status-ok {
+      color: #94d2a7;
+    }
+
+    .status-warn {
+      color: #ffd27d;
+    }
+
+    canvas {
+      display: none;
+    }
+  </style>
 </head>
 <body>
+  <div class="wrap">
+    <h1>Argus</h1>
+    <p class="sub">
+      Local-only browser app. Camera frames go to your local Node backend, and only the backend talks to OpenAI.
+    </p>
 
-<h1>Argus</h1>
+    <div class="card">
+      <div class="controls">
+        <button id="startCameraBtn">Start Camera</button>
+        <button id="autoScanBtn">Auto Scan</button>
+        <button id="setGoalBtn">Set Goal</button>
+        <button id="stopScanBtn" class="stop">Stop Scan</button>
+      </div>
 
-<button onclick="startCamera()">Start Camera</button>
-<button onclick="startScan()">Auto Scan</button>
-<button onclick="setGoal()">Set Goal</button>
+      <div class="video-shell">
+        <video id="video" autoplay playsinline muted></video>
+      </div>
+      <canvas id="canvas"></canvas>
+    </div>
 
-<br><br>
+    <div class="grid">
+      <div class="card">
+        <div class="label">Status</div>
+        <div id="statusText" class="value status-warn">Idle</div>
+      </div>
 
-<video id="video" autoplay playsinline width="300"></video>
-<canvas id="canvas" style="display:none;"></canvas>
+      <div class="card">
+        <div class="label">Current Goal</div>
+        <div id="goalText" class="value">None</div>
+      </div>
 
-<p id="output"></p>
+      <div class="card">
+        <div class="label">Last Spoken Instruction</div>
+        <div id="spokenText" class="value">Nothing spoken yet.</div>
+      </div>
 
-<script src="app.js"></script>
+      <div class="card">
+        <div class="label">Recommended Direction</div>
+        <div id="directionText" class="value">12 o'clock</div>
+      </div>
+    </div>
+  </div>
 
+  <script src="./app.js"></script>
 </body>
 </html>
