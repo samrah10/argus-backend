@@ -52,5 +52,5 @@ function startScan() {
 
   setInterval(() => {
     if (scanning) scan();
-  }, 3000);
+  }, 5000);
 }
